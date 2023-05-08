@@ -16,8 +16,8 @@ class DrawInformation:
 		(192, 192, 192)
 	]
 
-	FONT = pygame.font.SysFont('comicsans', 30)
-	LARGE_FONT = pygame.font.SysFont('comicsans', 40)
+	FONT = pygame.font.SysFont('comicsans', 20)
+	LARGE_FONT = pygame.font.SysFont('comicsans', 30)
 
 	SIDE_PAD = 100
 	TOP_PAD = 150
@@ -103,62 +103,85 @@ def bubble_sort(draw_info, ascending=True):
 				yield True
 
 	return lst
- 
+
+def insertion_sort(draw_info, ascending=True):
+	lst = draw_info.lst
+
+	for i in range(1, len(lst)):
+		current = lst[i]
+
+		while True:
+			ascending_sort = i > 0 and lst[i - 1] > current and ascending
+			descending_sort = i > 0 and lst[i - 1] < current and not ascending
+
+			if not ascending_sort and not descending_sort:
+				break
+
+			lst[i] = lst[i - 1]
+			i = i - 1
+			lst[i] = current
+			draw_list(draw_info, {i - 1: draw_info.GREEN, i: draw_info.RED}, True)
+			yield True
+
+	return lst
+
  
         
 def main():
-    run = True 
-    sorting = False
-    ascending = True
-    clock = pygame.time.Clock()
-    n = 50 
-    min_val = 0
-    max_val = 100
-    lst = generate_starting_list(n,min_val,max_val)
-    draw_info = DrawInformation(1000,800,lst)
-    
-    sorting_algorithm = bubble_sort
-    sorting_algo_name = "Bubble Sort"
-    sorting_algorithm_generator = None
-    
-    while run:
-        clock.tick(60)
+	run = True
+	clock = pygame.time.Clock()
 
-        if sorting:
-            try:
-                next(sorting_algorithm_generator)
-            except StopIteration:
-                sorting = False
-        else:
-            draw(draw_info, sorting_algo_name, ascending)
+	n = 50
+	min_val = 0
+	max_val = 100
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
+	lst = generate_starting_list(n, min_val, max_val)
+	draw_info = DrawInformation(800, 600, lst)
+	sorting = False
+	ascending = True
 
-            if event.type != pygame.KEYDOWN:
-                continue
+	sorting_algorithm = bubble_sort
+	sorting_algo_name = "Bubble Sort"
+	sorting_algorithm_generator = None
 
-            if event.key == pygame.K_r:
-                lst = generate_starting_list(n, min_val, max_val)
-                draw_info.set_list(lst)
-                sorting = False
-            elif event.key == pygame.K_SPACE and sorting == False:
-                sorting = True
-                sorting_algorithm_generator = sorting_algorithm(draw_info, ascending)
-            elif event.key == pygame.K_a and not sorting:
-                ascending = True
-            elif event.key == pygame.K_d and not sorting:
-                ascending = False
-            #elif event.key == pygame.K_i and not sorting:
-             #   sorting_algorithm = insertion_sort
-              #  sorting_algo_name = "Insertion Sort"
-            elif event.key == pygame.K_b and not sorting:
-                sorting_algorithm = bubble_sort
-                sorting_algo_name = "Bubble Sort"
-                
+	while run:
+		clock.tick(60)
 
-    pygame.quit()        
+		if sorting:
+			try:
+				next(sorting_algorithm_generator)
+			except StopIteration:
+				sorting = False
+		else:
+			draw(draw_info, sorting_algo_name, ascending)
+
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				run = False
+
+			if event.type != pygame.KEYDOWN:
+				continue
+
+			if event.key == pygame.K_r:
+				lst = generate_starting_list(n, min_val, max_val)
+				draw_info.set_list(lst)
+				sorting = False
+			elif event.key == pygame.K_SPACE and sorting == False:
+				sorting = True
+				sorting_algorithm_generator = sorting_algorithm(draw_info, ascending)
+			elif event.key == pygame.K_a and not sorting:
+				ascending = True
+			elif event.key == pygame.K_d and not sorting:
+				ascending = False
+			elif event.key == pygame.K_i and not sorting:
+				sorting_algorithm = insertion_sort
+				sorting_algo_name = "Insertion Sort"
+			elif event.key == pygame.K_b and not sorting:
+				sorting_algorithm = bubble_sort
+				sorting_algo_name = "Bubble Sort"
+
+
+	pygame.quit()
         
 
 if __name__ == "__main__":
